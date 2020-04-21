@@ -1,4 +1,4 @@
-## import stuff
+## import modules
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,21 +8,37 @@ from scipy.special import logit, expit
 
 
 ## problem 7.1 from the textbook
-np.random.seed(0)
+np.random.seed(50)
 
 mu1 = 7
 mu2 = 10
 sig = 0.5
-delta1 = 0.7
+delta1 = 0.7          # known delta for this problem
 n = 200
 
 # part a
-dist1 = np.random.normal(loc=mu1, scale=sig, size=int(n*delta1))
-dist2 = np.random.normal(loc=mu2, scale=sig, size=int(n*(1-delta1)))
+dist1 = np.random.normal(loc=mu1,
+                         scale=sig,
+                         size=int(n*delta1))
+dist2 = np.random.normal(loc=mu2,
+                         scale=sig,
+                         size=int(n*(1-delta1)))
 mix_vals = np.hstack((dist1, dist2))
-plt.hist(mix_vals)  ## TODO: make prettier
+
+# plotting for a
+plt.figure()
+sns.distplot(mix_vals,
+             hist=True,
+             kde=True,
+             label = 'Fitted KDE') 
+#plt.hist(mix_vals, density=True, 
+         # rwidth=0.8, 
+         # color = 'green',
+         # label = 'Realizations from Mixture Distribution') 
 plt.xlabel('Value')
 plt.ylabel('Frequency')
+plt.title('Sampling Distribution of Mixture Model $\delta = 0.7$')
+plt.legend()
 
 
 # part b
@@ -91,8 +107,14 @@ m=100000
 deltas = np.zeros(m)          # this is where we will place our updated deltas
 delta = delta_0 = logit(0.5)  # some value between 0 and 1
 
+def mix2():
+    
+
 def jacob(delta):
     return np.abs(1/(np.exp(delta)+1)-1/(np.exp(delta)+1)**2)
+
+def like2(delta):
+    return np.sum()
 
 for i in range(m):
     
