@@ -26,53 +26,79 @@ dist2 = np.random.normal(loc=mu2,
 mix_vals = np.hstack((dist1, dist2))
 
 # plotting for a
+bns = np.linspace(4,11,14)
 plt.figure()
 sns.distplot(mix_vals,
+             bins=bns,
              hist=True,
              kde=True,
-             label = 'Fitted KDE') 
-#plt.hist(mix_vals, density=True, 
-         # rwidth=0.8, 
-         # color = 'green',
-         # label = 'Realizations from Mixture Distribution') 
-plt.xlabel('Value')
+             norm_hist= True,
+             label = 'Sampling distribution') 
+ 
+plt.xlabel('$y$ value')
 plt.ylabel('Frequency')
 plt.title('Sampling Distribution of Mixture Model $\delta = 0.7$')
 plt.legend()
 
-
-# part b
+## part b
 def mix_normal(vals, delta):
   return delta*stats.norm.pdf(vals, mu1, sig) + (1-delta)*stats.norm.pdf(vals, mu2, sig)
 
 def likelihood(delta):
   return np.prod(mix_normal(mix_vals, delta))
 
-m = 10000
+m = 100000
 deltas = np.zeros(m)          # this is where we will place our updated deltas
 delta = delta_0 = 0.5         # some value between 0 and 1
 
 for i in range(m):
     
     # grab from the prior/proposal
-    delt_star = np.random.uniform(low=0, high=1, size=1)
+    delt_star = np.random.uniform(low=0, 
+                                  high=1, 
+                                  size=1)
     
     # compute Metropolis-Hastings ratio R
     R = likelihood(delt_star)/likelihood(delta)  # see ex 7.1 for justification
     
     # sample a value for X(t+1) 
-    rand_val = np.random.uniform(low=0, high=1, size=1) # determines if we accept or reject (think of this as prob)
+    rand_val = np.random.uniform(low=0, 
+                                 high=1,
+                                 size=1)  # determines if we accept or reject (think of this as prob)
     
     if rand_val <= np.min((R, 1)):
-        delta = delt_star
-        
+        delta = delt_star 
     else:
         delta = delta
         
     deltas[i] = delta
 
+
+# plotting for b
 plt.figure()
-sns.distplot(deltas, hist=True, kde=True)
+sns.distplot(deltas,
+             bins=np.linspace(0.5, 0.85, 30),
+             kde=True,
+             hist=False,
+             label = 'Fitted KDE') 
+
+plt.hist(deltas, 
+         density=True, 
+         color='green',
+         bins=np.linspace(0.5, 0.85, 30),
+         rwidth=0.8,
+         label='Posterior sampling of $\delta$')
+ 
+plt.xlabel('$\delta$ value')
+plt.ylabel('Frequency')
+plt.title('Sampling Distribution of $\delta$')
+plt.legend()                                 
+
+b_mean = np.mean(deltas)
+b_var = np.var(deltas)
+print('The sample mean of delta using Markov Chain Monte Carlo is ' + str(b_mean))
+print('The sample variance of delta using Markov Chain Monte Carlo is ' + str(b_var))
+print('using ' + str(m) + ' iterations.')
 
 
 # part c (random walk chain)
@@ -99,7 +125,29 @@ for i in range(m):
     deltas[i] = delta
 
 plt.figure()
-plt.hist(deltas)
+sns.distplot(deltas,
+             bins=np.linspace(0.5, 0.85, 30),
+             kde=True,
+             hist=False,
+             label = 'Fitted KDE') 
+
+plt.hist(deltas, 
+         density=True, 
+         color='green',
+         bins=np.linspace(0.5, 0.85, 30),
+         rwidth=0.8,
+         label='Posterior sampling of $\delta$')
+ 
+plt.xlabel('$\delta$ value')
+plt.ylabel('Frequency')
+plt.title('Sampling Distribution of $\delta$ using Random Walk')
+plt.legend()                                 
+
+c_mean = np.mean(deltas)
+c_var = np.var(deltas)
+print('The sample mean of delta using Markov Chain Monte Carlo with random walk is ' + str(c_mean))
+print('The sample variance of delta using Markov Chain Monte Carlo with random walk is ' + str(c_var))
+print('using ' + str(m) + ' iterations.')
 
 
 # part d (logit reparameterization)
