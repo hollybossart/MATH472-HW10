@@ -194,12 +194,12 @@ for i in range(m):
     # sample a value for X(t+1) 
     rand_val = np.random.uniform(0,1)  # probability value
     
-    if rand_val <= np.min((R,1)):
+    if rand_val <= np.min((R,1)) and 0 <= expit(delt_star) <= 1:
         delta = delt_star
     else:
         delta = delta
         
-    deltas[i] = delta
+    deltas[i] = expit(delta)
 
 deltas = deltas[burn:]
 plt.figure()
@@ -211,7 +211,7 @@ sns.distplot(deltas,
 
 plt.xlabel('$\delta$ value')
 plt.ylabel('Frequency')
-plt.title('Sampling Distribution of $\delta$ using Random Walk')
+plt.title('Sampling Distribution of $\delta$ using Reparameterized Random Walk')
 plt.legend()      
 
 # path plot
