@@ -308,7 +308,7 @@ for i in range(m):
 # plotting the chains
 fig1 = plt.figure()
 plt.title('Markov Chain with $x^{(0)} = 0$')
-plt.plot(np.linspace(0, m, len(xs1)), xs1)
+plt.plot(np.linspace(0, m, len(xs1)), xs1)    
 plt.xlabel('Iteration')
 plt.ylabel('$x$ value')
 
@@ -324,4 +324,28 @@ plt.plot(np.linspace(0, m, len(xs3)), xs3)
 plt.xlabel('Iteration')
 plt.ylabel('$x$ value')
 
-# plotting the histograms
+# plotting the histograms and True PDF in one graph
+plt.figure()
+plt.title('Sampling MCMC Distributions with Various $x^{(0)}$ and the True Density')
+plt.xlabel('x value')
+plt.ylable('Frequency')
+plt.plot(np.linspace(-3, 12, 10000),
+         f(np.linspace(-3, 12, 10000)),
+         label = 'True Density')              # true pdf
+
+sns.distplot(xs1,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=0$ sample')
+
+sns.distplot(xs2,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=7$ sample')
+
+sns.distplot(xs3,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=15$ sample')
+
+plt.legend(bbox_to_anchor=(1.05, 1))
