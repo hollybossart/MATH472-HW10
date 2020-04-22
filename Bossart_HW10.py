@@ -8,7 +8,7 @@ from scipy.special import logit, expit
 
 
 ## problem 7.1 from the textbook
-np.random.seed(50)
+np.random.seed(0)
 
 mu1 = 7
 mu2 = 10
@@ -229,3 +229,99 @@ print('using ' + str(m) + ' iterations')
 print('and a burn-in period of ' + str(burn))  
 
     
+
+
+# number 2
+
+def f(x):
+  return delta*stats.norm.pdf(x, mu1, sig) + (1-delta)*stats.norm.pdf(x, mu2, sig)
+
+
+# part a
+m=10000
+xs1 = np.zeros(m)           
+x = x_0 = 0 
+delta = 0.7
+
+## first starting value
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=0.01, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=0.01))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=0.01))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x_star
+        
+    xs1[i] = x
+    
+## second starting value
+xs2 = np.zeros(m)           
+x = x_0 = 7 
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=0.01, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=0.01))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=0.01))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x_star
+        
+    xs2[i] = x
+    
+## third starting value
+xs3 = np.zeros(m)           
+x = x_0 = 15 
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=0.01, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=0.01))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=0.01))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x_star
+        
+    xs3[i] = x
+    
+    
+# plotting the chains
+fig1 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 0$')
+plt.plot(np.linspace(0, m, len(xs1)), xs1)
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+fig2 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 7$')
+plt.plot(np.linspace(0, m, len(xs2)), xs2)
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+fig3 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 15$')
+plt.plot(np.linspace(0, m, len(xs3)), xs3)
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+# plotting the histograms
