@@ -232,7 +232,9 @@ print('and a burn-in period of ' + str(burn))
 
 
 # number 2
-
+mu1= 7
+mu2= 10
+sig = 0.5
 def f(x):
   return delta*stats.norm.pdf(x, mu1, sig) + (1-delta)*stats.norm.pdf(x, mu2, sig)
 
@@ -258,7 +260,7 @@ for i in range(m):
     if rand_val <= np.min((R,1)):
         x = x_star
     else:
-        x = x_star
+        x = x
         
     xs1[i] = x
     
@@ -279,7 +281,7 @@ for i in range(m):
     if rand_val <= np.min((R,1)):
         x = x_star
     else:
-        x = x_star
+        x = x
         
     xs2[i] = x
     
@@ -300,7 +302,7 @@ for i in range(m):
     if rand_val <= np.min((R,1)):
         x = x_star
     else:
-        x = x_star
+        x = x
         
     xs3[i] = x
     
@@ -328,7 +330,7 @@ plt.ylabel('$x$ value')
 plt.figure()
 plt.title('Sampling MCMC Distributions with Various $x^{(0)}$ and the True Density')
 plt.xlabel('x value')
-plt.ylable('Frequency')
+plt.ylabel('Frequency')
 plt.plot(np.linspace(-3, 12, 10000),
          f(np.linspace(-3, 12, 10000)),
          label = 'True Density')              # true pdf
@@ -349,3 +351,138 @@ sns.distplot(xs3,
              label= '$x^{(0)}=15$ sample')
 
 plt.legend(bbox_to_anchor=(1.05, 1))
+
+
+## part b
+m=10000
+mu1 =7
+mu2 = 10
+sig = 0.5
+xs1 = np.zeros(m)           
+x = x_0 = 0 
+delta = 0.7
+
+## first starting value
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=3, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=3))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=3))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x
+        
+    xs1[i] = x
+    
+## second starting value
+xs2 = np.zeros(m)           
+x = x_0 = 7 
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=3, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=3))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=3))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x
+        
+    xs2[i] = x
+    
+## third starting value
+xs3 = np.zeros(m)           
+x = x_0 = 15 
+for i in range(m):
+    
+    # grab from the proposal
+    x_star = stats.norm.rvs(loc=x, scale=3, size=1)
+    
+    # compute Metropolis-Hastings ratio R
+    R = (f(x_star)*stats.norm.pdf(x, loc=x, scale=3))/(f(x)*stats.norm.pdf(x_star, loc=x, scale=3))
+        
+    # sample a value for X(t+1) 
+    rand_val = np.random.uniform(0,1)
+    
+    if rand_val <= np.min((R,1)):
+        x = x_star
+    else:
+        x = x
+        
+    xs3[i] = x
+    
+    
+# plotting the chains
+fig1 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 0$')
+plt.plot(np.linspace(0, m, len(xs1)), xs1)    
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+fig2 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 7$')
+plt.plot(np.linspace(0, m, len(xs2)), xs2)
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+fig3 = plt.figure()
+plt.title('Markov Chain with $x^{(0)} = 15$')
+plt.plot(np.linspace(0, m, len(xs3)), xs3)
+plt.xlabel('Iteration')
+plt.ylabel('$x$ value')
+
+# plotting the histograms and True PDF in one graph
+plt.figure()
+plt.title('Sampling MCMC Distributions with  $x^{(0)} = 0$ and the True Density')
+plt.xlabel('x value')
+plt.ylabel('Frequency')
+plt.plot(np.linspace(2, 16, 10000),
+         f(np.linspace(2, 16, 10000)),
+         label = 'True Density')              # true pdf
+
+sns.distplot(xs1,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=0$ sample')
+
+plt.legend()
+
+plt.figure()
+plt.title('Sampling MCMC Distributions $x^{(0)} = 7$')
+plt.xlabel('x value')
+plt.ylabel('Frequency')
+plt.plot(np.linspace(2, 16, 10000),
+         f(np.linspace(2, 16, 10000)),
+         label = 'True Density')    
+
+sns.distplot(xs2,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=7$ sample')
+plt.legend()
+
+plt.figure()
+plt.title('Sampling MCMC Distributions with $x^{(0)} = 15$ and the True Density')
+plt.xlabel('x value')
+plt.ylabel('Frequency')
+plt.plot(np.linspace(2, 16, 10000),
+         f(np.linspace(2, 16, 10000)),
+         label = 'True Density')    
+
+sns.distplot(xs3,
+             kde=True,
+             norm_hist=True,
+             label= '$x^{(0)}=15$ sample')   
+plt.legend()
